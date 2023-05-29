@@ -3,19 +3,12 @@ import 'dart:io';
 
 import 'package:logging_collector/src/domain/appender/logger_appender.dart';
 
-class _RollingFileAppenderTask {
-  final String log;
-  final Future Function(String) action;
-
-  _RollingFileAppenderTask(this.log, this.action);
-}
-
 class RollingFileAppender implements LoggerAppender {
   final String _dirPath;
   final int _fileMaxCount;
   final int _fileMaxSize;
   bool _isExecuting = false;
-  final Queue<_RollingFileAppenderTask> _queue = Queue();
+  final Queue<String> _queue = Queue();
 
   RollingFileAppender({
     required String dirPath,
@@ -29,30 +22,27 @@ class RollingFileAppender implements LoggerAppender {
 
   @override
   Future<void> append(String log) async {
-    _queue.addFirst(
-      _RollingFileAppenderTask(
-        log,
-        (log) async {
-          final directory = Directory(_dirPath);
-
-          if (!(await directory.exists())) {
-            throw StateError('Error! Directory $_dirPath does not exist');
-          }
-
-          final logBytes = log.codeUnits;
-          final logBytesLength = logBytes.length;
-
-          if (logBytesLength > _fileMaxSize) {
-            throw ArgumentError('Error! Log is too long');
-          }
-
-          final file = await _getFile(directory, logBytesLength);
-
-          await file.writeAsBytes(logBytes, mode: FileMode.append);
-        },
-      ),
-    );
+    _queue.addFirst(log);
     _startExecution();
+  }
+
+  Future<void> _execute(String log) async {
+    final directory = Directory(_dirPath);
+
+    if (!(await directory.exists())) {
+      throw StateError('Error! Directory $_dirPath does not exist');
+    }
+
+    final logBytes = log.codeUnits;
+    final logBytesLength = logBytes.length;
+
+    if (logBytesLength > _fileMaxSize) {
+      throw ArgumentError('Error! Log is too long');
+    }
+
+    final file = await _getFile(directory, logBytesLength);
+
+    await file.writeAsBytes(logBytes, mode: FileMode.append);
   }
 
   Future<void> _startExecution() async {
@@ -61,7 +51,7 @@ class RollingFileAppender implements LoggerAppender {
     while (_queue.isNotEmpty) {
       _isExecuting = true;
       final task = _queue.removeLast();
-      await task.action.call(task.log);
+      await _execute(task);
       _isExecuting = false;
     }
   }
