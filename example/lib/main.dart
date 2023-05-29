@@ -19,7 +19,6 @@ Future<void> main() async {
   logsDirectory.createSync();
 
   final appenders = [
-    ConsoleAppender(),
     RollingFileAppender(
       dirPath: logsDirectoryPath,
       fileMaxSize: 1024 * 1024,
@@ -48,7 +47,7 @@ Future<void> main() async {
   Logger.root.level = Level.ALL;
 
   Logger.root.onRecord.listen(
-    (LogRecord record) {
+    (LogRecord record) async {
       String log;
       if (record.error != null) {
         log = '${record.level.name}: ${record.time}: ${record.loggerName}:'
@@ -60,7 +59,7 @@ Future<void> main() async {
       }
 
       for (final appender in appenders) {
-        appender.append(log);
+        await appender.append(log);
       }
     },
   );

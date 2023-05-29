@@ -27,19 +27,31 @@ class LoggingCollectorBloc
     ClearAllEvent event,
     Emitter<LoggingCollectorState> emitter,
   ) async {
-    final file = File(_directoryPath);
-    if (file.existsSync()) {
-      file.deleteSync();
-    } else {
-      emitter(AbsentFileState());
+    final directory = Directory(_directoryPath);
+    if (directory.existsSync()) {
+      directory.deleteSync(recursive: true);
     }
+
+    emitter(PendingActionState());
   }
 
   Future<void> _onShareEvent(
     ShareEvent event,
     Emitter<LoggingCollectorState> emitter,
   ) async {
-    await _shareCallback.call();
+    final directory = Directory(_directoryPath);
+
+    if (directory.existsSync()) {
+      List<FileSystemEntity> fileList = directory.listSync();
+      if (fileList.whereType<File>().toList().isEmpty) {
+        emitter(AbsentFileState());
+      } else {
+        await _shareCallback.call();
+      }
+    } else {
+      emitter(AbsentFileState());
+    }
+    emitter(PendingActionState());
   }
 
   Future<void> _onShowEvent(
@@ -47,17 +59,22 @@ class LoggingCollectorBloc
     Emitter<LoggingCollectorState> emitter,
   ) async {
     final directory = Directory(_directoryPath);
-    List<FileSystemEntity> fileList = directory.listSync();
-    fileList.sort((a, b) {
-      return a.path.compareTo(b.path);
-    });
 
-    final file = fileList.whereType<File>().toList().first;
-    if (file.existsSync()) {
-      emitter(ShowLogsState(file.readAsStringSync()));
-      emitter(PendingActionState());
+    if (directory.existsSync()) {
+      List<FileSystemEntity> fileList = directory.listSync();
+      fileList.sort((a, b) {
+        return a.path.compareTo(b.path);
+      });
+
+      final file = fileList.whereType<File>().toList().firstOrNull;
+      if (file != null && file.existsSync()) {
+        emitter(ShowLogsState(file.readAsStringSync()));
+      } else {
+        emitter(AbsentFileState());
+      }
     } else {
       emitter(AbsentFileState());
     }
+    emitter(PendingActionState());
   }
 }

@@ -2,7 +2,6 @@ library logging_collector;
 
 export 'src/ui/logging_collector_widget.dart';
 export 'src/domain/appender/logger_appender.dart';
-export 'src/domain/appender/console_appender.dart';
 export 'src/domain/appender/rolling_file_appender.dart';
 
 typedef ShareCallback = Future<void> Function();
