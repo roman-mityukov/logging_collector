@@ -3,18 +3,19 @@ import 'dart:io';
 
 import 'package:logging_collector/src/domain/appender/logger_appender.dart';
 
-class Task {
+class _RollingFileAppenderTask {
   final String log;
   final Future Function(String) action;
 
-  Task(this.log, this.action);
+  _RollingFileAppenderTask(this.log, this.action);
 }
 
 class RollingFileAppender implements LoggerAppender {
   final String _dirPath;
   final int _fileMaxCount;
   final int _fileMaxSize;
-  final Queue<Task> _queue = Queue();
+  bool _isExecuting = false;
+  final Queue<_RollingFileAppenderTask> _queue = Queue();
 
   RollingFileAppender({
     required String dirPath,
@@ -28,8 +29,8 @@ class RollingFileAppender implements LoggerAppender {
 
   @override
   Future<void> append(String log) async {
-    _queue.add(
-      Task(
+    _queue.addFirst(
+      _RollingFileAppenderTask(
         log,
         (log) async {
           final directory = Directory(_dirPath);
@@ -54,16 +55,14 @@ class RollingFileAppender implements LoggerAppender {
     _startExecution();
   }
 
-  bool _isStarted = false;
-
   Future<void> _startExecution() async {
-    if (_isStarted) return;
+    if (_isExecuting) return;
 
     while (_queue.isNotEmpty) {
-      _isStarted = true;
+      _isExecuting = true;
       final task = _queue.removeLast();
       await task.action.call(task.log);
-      _isStarted = false;
+      _isExecuting = false;
     }
   }
 
@@ -75,7 +74,7 @@ class RollingFileAppender implements LoggerAppender {
     if (fileList.isEmpty) {
       file = await _createFile(0);
     } else {
-      file = fileList.last;
+      file = fileList.first;
 
       if ((await file.length()) + logBytesLength > _fileMaxSize) {
         if (fileList.length < _fileMaxCount) {
@@ -115,14 +114,13 @@ class RollingFileAppender implements LoggerAppender {
     final files = await _getFileList(directory);
 
     for (int i = files.length - 1; i >= 1; i--) {
-      final newestFile = files[i];
-      final oldestFile = files[i - 1];
-
-      await newestFile.writeAsBytes(await oldestFile.readAsBytes());
+      final oldestFile = files[i];
+      final newestFile = files[i - 1];
+      oldestFile.writeAsBytesSync(newestFile.readAsBytesSync());
     }
 
     final result = files.first;
-    await result.writeAsBytes([]);
+    result.writeAsStringSync('');
     return result;
   }
 }
