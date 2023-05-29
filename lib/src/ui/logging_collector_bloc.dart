@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'dart:collection';
 import 'dart:io';
 
 import 'package:equatable/equatable.dart';
@@ -68,7 +69,9 @@ class LoggingCollectorBloc
 
       final file = fileList.whereType<File>().toList().firstOrNull;
       if (file != null && file.existsSync()) {
-        emitter(ShowLogsState(file.readAsStringSync()));
+        final bytes = file.readAsBytesSync();
+        final string = String.fromCharCodes(bytes);
+        emitter(ShowLogsState(string));
       } else {
         emitter(AbsentFileState());
       }

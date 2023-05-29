@@ -1,6 +1,6 @@
 name: logging_collector
 description: Package for logs sharing.
-version: 0.0.2
+version: 0.0.3
 homepage: 'https://github.com/roman-mityukov/logging_collector'
 repository: 'https://github.com/roman-mityukov/logging_collector'
 
