@@ -45,12 +45,12 @@ class LoggingCollectorBloc
     if (directory.existsSync()) {
       List<FileSystemEntity> fileList = directory.listSync();
       if (fileList.whereType<File>().toList().isEmpty) {
-        emitter(AbsentFileState());
+        emitter(AbsentLogsState());
       } else {
         await _shareCallback.call();
       }
     } else {
-      emitter(AbsentFileState());
+      emitter(AbsentLogsState());
     }
     emitter(PendingActionState());
   }
@@ -73,10 +73,10 @@ class LoggingCollectorBloc
         final string = String.fromCharCodes(bytes);
         emitter(ShowLogsState(string));
       } else {
-        emitter(AbsentFileState());
+        emitter(AbsentLogsState());
       }
     } else {
-      emitter(AbsentFileState());
+      emitter(AbsentLogsState());
     }
     emitter(PendingActionState());
   }

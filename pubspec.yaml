@@ -1,6 +1,6 @@
 name: logging_collector
 description: Package for logs sharing.
-version: 0.0.5
+version: 0.0.6
 homepage: 'https://github.com/roman-mityukov/logging_collector'
 repository: 'https://github.com/roman-mityukov/logging_collector'
 
@@ -20,10 +20,12 @@ dependencies:
   provider: ^6.0.5
 
 dev_dependencies:
+  build_runner: ^2.4.4
   flutter_test:
     sdk: flutter
   flutter_lints: ^2.0.0
   file: ^7.0.0
+  mockito: ^5.4.1
 
 
 # For information on the generic Dart part of this file, see the

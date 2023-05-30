@@ -7,7 +7,7 @@ sealed class LoggingCollectorState extends Equatable {
 
 class PendingActionState extends LoggingCollectorState {}
 
-class AbsentFileState extends LoggingCollectorState {}
+class AbsentLogsState extends LoggingCollectorState {}
 
 class ShowLogsState extends LoggingCollectorState {
   final String data;

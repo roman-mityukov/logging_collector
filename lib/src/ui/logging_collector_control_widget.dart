@@ -48,10 +48,10 @@ class LoggingCollectorControlWidget extends StatelessWidget {
         }
       },
       listenWhen: (previous, current) {
-        return current is AbsentFileState || current is ShowLogsState;
+        return current is AbsentLogsState || current is ShowLogsState;
       },
       listener: (context, state) {
-        if (state is AbsentFileState) {
+        if (state is AbsentLogsState) {
           showDialog(
             context: context,
             builder: (context) {

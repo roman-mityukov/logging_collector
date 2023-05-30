@@ -20,7 +20,7 @@ Future<void> main() async {
 
   final appenders = [
     RollingFileAppender(
-      dirPath: logsDirectoryPath,
+      directoryPath: logsDirectoryPath,
       fileMaxSize: 1024 * 1024,
       fileMaxCount: 3,
     ),
@@ -90,9 +90,6 @@ class _MyAppState extends State<MyApp> {
 
   @override
   Widget build(BuildContext context) {
-    _logger.info('log1');
-    _logger.info('log2');
-
     return MaterialApp(
       title: 'Flutter Demo',
       theme: ThemeData(
@@ -116,7 +113,7 @@ class _MyHomePageState extends State<MyHomePage> {
   void _showLoggingCollectorWidget() {
     Navigator.of(context).push(
       CupertinoPageRoute(
-          builder: (context) => const LoggingCollectorRunnerWidget()),
+          builder: (context) => const LoggingCollectorWidget()),
     );
   }
 

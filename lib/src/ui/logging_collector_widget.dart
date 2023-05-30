@@ -5,8 +5,8 @@ import 'package:logging_collector/logging_collector.dart';
 import 'package:logging_collector/src/ui/logging_collector_bloc.dart';
 import 'package:logging_collector/src/ui/logging_collector_control_widget.dart';
 
-class LoggingCollectorRunnerWidget extends StatelessWidget {
-  const LoggingCollectorRunnerWidget({Key? key}) : super(key: key);
+class LoggingCollectorWidget extends StatelessWidget {
+  const LoggingCollectorWidget({Key? key}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
