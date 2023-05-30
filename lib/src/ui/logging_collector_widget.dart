@@ -6,16 +6,15 @@ import 'package:logging_collector/src/ui/logging_collector_bloc.dart';
 import 'package:logging_collector/src/ui/logging_collector_control_widget.dart';
 
 class LoggingCollectorWidget extends StatelessWidget {
-  const LoggingCollectorWidget({Key? key}) : super(key: key);
+  final LoggingCollectorConfig config;
+
+  const LoggingCollectorWidget(this.config, {Key? key}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
     return BlocProvider(
       create: (context) {
-        return LoggingCollectorBloc(
-          LoggingCollector.logsDirectoryPath,
-          LoggingCollector.shareCallback,
-        );
+        return LoggingCollectorBloc(config);
       },
       child: const LoggingCollectorControlWidget(),
     );

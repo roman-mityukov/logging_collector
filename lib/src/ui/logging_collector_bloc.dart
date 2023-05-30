@@ -12,13 +12,9 @@ part 'logging_collector_state.dart';
 
 class LoggingCollectorBloc
     extends Bloc<LoggingCollectorEvent, LoggingCollectorState> {
-  final String _directoryPath;
-  final ShareCallback _shareCallback;
+  final LoggingCollectorConfig _config;
 
-  LoggingCollectorBloc(
-    this._directoryPath,
-    this._shareCallback,
-  ) : super(PendingActionState()) {
+  LoggingCollectorBloc(this._config) : super(PendingActionState()) {
     on<ClearAllEvent>(_onClearAllEvent);
     on<ShareEvent>(_onShareEvent);
     on<ShowEvent>(_onShowEvent);
@@ -28,7 +24,7 @@ class LoggingCollectorBloc
     ClearAllEvent event,
     Emitter<LoggingCollectorState> emitter,
   ) async {
-    final directory = Directory(_directoryPath);
+    final directory = Directory(_config.logsDirectoryPath);
     if (directory.existsSync()) {
       directory.deleteSync(recursive: true);
     }
@@ -40,14 +36,14 @@ class LoggingCollectorBloc
     ShareEvent event,
     Emitter<LoggingCollectorState> emitter,
   ) async {
-    final directory = Directory(_directoryPath);
+    final directory = Directory(_config.logsDirectoryPath);
 
     if (directory.existsSync()) {
       List<FileSystemEntity> fileList = directory.listSync();
       if (fileList.whereType<File>().toList().isEmpty) {
         emitter(AbsentLogsState());
       } else {
-        await _shareCallback.call();
+        await _config.sharingCallback.call();
       }
     } else {
       emitter(AbsentLogsState());
@@ -59,7 +55,7 @@ class LoggingCollectorBloc
     ShowEvent event,
     Emitter<LoggingCollectorState> emitter,
   ) async {
-    final directory = Directory(_directoryPath);
+    final directory = Directory(_config.logsDirectoryPath);
 
     if (directory.existsSync()) {
       List<FileSystemEntity> fileList = directory.listSync();

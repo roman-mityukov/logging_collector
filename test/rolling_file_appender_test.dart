@@ -8,7 +8,7 @@ import 'package:mockito/mockito.dart';
 import 'rolling_file_appender_test.mocks.dart';
 import 'test_utils.dart';
 
-@GenerateMocks([RollingFileAppenderErrorHandler])
+@GenerateMocks([LoggingAppenderErrorHandler])
 void main() {
   final String dirPath = '${Directory.systemTemp.path}/logs';
   const String log = 'someLog';
@@ -78,7 +78,7 @@ void main() {
     'WHEN call append, '
     'THEN append throws state error',
     () async {
-      final errorHandler = MockRollingFileAppenderErrorHandler();
+      final errorHandler = MockLoggingAppenderErrorHandler();
 
       final rollingFileAppender = RollingFileAppender(
         directoryPath: 'generated/invalid',
@@ -102,7 +102,7 @@ void main() {
     () async {
       final log = getRandomString(fileMaxSize * 2);
 
-      final errorHandler = MockRollingFileAppenderErrorHandler();
+      final errorHandler = MockLoggingAppenderErrorHandler();
 
       final rollingFileAppender = RollingFileAppender(
         directoryPath: dirPath,

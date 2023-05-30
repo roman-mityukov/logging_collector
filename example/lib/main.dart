@@ -8,6 +8,7 @@ import 'package:flutter/material.dart';
 import 'package:logging/logging.dart';
 import 'package:logging_collector/logging_collector.dart';
 import 'package:path_provider/path_provider.dart';
+import 'package:provider/provider.dart';
 import 'package:share_plus/share_plus.dart';
 
 Future<void> main() async {
@@ -26,9 +27,9 @@ Future<void> main() async {
     ),
   ];
 
-  LoggingCollector.init(
-    logsDirectoryPath: logsDirectoryPath,
-    shareCallback: () async {
+  final loggingCollectorConfig = LoggingCollectorConfig(
+    logsDirectoryPath,
+    () async {
       final zipEncoder = ZipFileEncoder();
       final zipPath = '${docsDirectory.path}/logs.zip';
       zipEncoder.zipDirectory(
@@ -64,7 +65,12 @@ Future<void> main() async {
     },
   );
 
-  runApp(const MyApp());
+  runApp(
+    Provider<LoggingCollectorConfig>.value(
+      value: loggingCollectorConfig,
+      child: const MyApp(),
+    ),
+  );
 }
 
 class MyApp extends StatefulWidget {
@@ -110,13 +116,6 @@ class MyHomePage extends StatefulWidget {
 }
 
 class _MyHomePageState extends State<MyHomePage> {
-  void _showLoggingCollectorWidget() {
-    Navigator.of(context).push(
-      CupertinoPageRoute(
-          builder: (context) => const LoggingCollectorWidget()),
-    );
-  }
-
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -125,7 +124,12 @@ class _MyHomePageState extends State<MyHomePage> {
       ),
       body: const Placeholder(),
       floatingActionButton: FloatingActionButton(
-        onPressed: _showLoggingCollectorWidget,
+        onPressed: () {
+          Navigator.of(context).push(
+            CupertinoPageRoute(
+                builder: (context) => LoggingCollectorWidget(context.read())),
+          );
+        },
         tooltip: 'Increment',
         child: const Icon(Icons.add),
       ),

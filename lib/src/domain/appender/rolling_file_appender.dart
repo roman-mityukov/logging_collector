@@ -2,17 +2,11 @@ import 'dart:collection';
 import 'dart:io';
 
 import 'package:logging_collector/src/domain/appender/logger_appender.dart';
-
-abstract class RollingFileAppenderErrorHandler {
-  Future<void> call(
-    Object error,
-    StackTrace? stackTrace,
-  );
-}
+import 'package:logging_collector/src/domain/appender/logger_appender_error_handler.dart';
 
 class RollingFileAppender implements LoggerAppender {
   final String _directoryPath;
-  final RollingFileAppenderErrorHandler? _errorHandler;
+  final LoggingAppenderErrorHandler? _errorHandler;
   final int _fileMaxCount;
   final int _fileMaxSize;
   bool _isExecuting = false;
@@ -22,11 +16,12 @@ class RollingFileAppender implements LoggerAppender {
     required String directoryPath,
     required int fileMaxCount,
     required int fileMaxSize,
-    RollingFileAppenderErrorHandler? errorHandler,
+    LoggingAppenderErrorHandler? errorHandler,
   })  : _directoryPath = directoryPath,
         _errorHandler = errorHandler,
         _fileMaxSize = fileMaxSize,
         _fileMaxCount = fileMaxCount,
+        assert(directoryPath.isNotEmpty),
         assert(fileMaxCount > 0),
         assert(fileMaxSize > 0);
 
