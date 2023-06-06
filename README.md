@@ -17,6 +17,7 @@ logsDirectory.createSync();
 create `RollingFileAppender`, it'll write log messages into logs directory
 
 ```dart
+import 'package:logging_collector/logging_collector.dart';
 final appenders = [
   RollingFileAppender(
     directoryPath: logsDirectoryPath,
@@ -45,6 +46,7 @@ Logger.root.onRecord.listen(
 create `LoggingCollectorConfig` and run app
 
 ```dart
+import 'package:logging_collector/logging_collector.dart';
 final loggingCollectorConfig = LoggingCollectorConfig(
   logsDirectoryPath,
   _CustomSharingDelegate(logsDirectory),
