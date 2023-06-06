@@ -60,6 +60,8 @@ runApp(
 );
 ```
 
+For logs monitoring, sharing and clearing logs forlder you can use `LoggingCollectorWidget`
+
 For logs sharing (optional) you can implement `LogsSharingDelegate`. E.g.
 
 ```dart

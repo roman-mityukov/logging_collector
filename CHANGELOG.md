@@ -1,3 +1,7 @@
+## 0.0.10
+
+* Update README
+
 ## 0.0.9
 
 * Fix LICENSE
