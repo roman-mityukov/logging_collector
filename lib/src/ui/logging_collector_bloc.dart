@@ -38,7 +38,7 @@ class LoggingCollectorBloc
     final fileList = _getFileList();
 
     if (fileList.isNotEmpty) {
-      await _config.sharingDelegate.share();
+      await _config.sharingDelegate?.share();
     } else {
       emitter(AbsentLogsState(_config));
     }

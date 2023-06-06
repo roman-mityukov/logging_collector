@@ -11,7 +11,7 @@ export 'src/domain/sharing/logs_sharing_delegate.dart';
 
 class LoggingCollectorConfig extends Equatable {
   final String logsDirectoryPath;
-  final LogsSharingDelegate sharingDelegate;
+  final LogsSharingDelegate? sharingDelegate;
 
   const LoggingCollectorConfig(this.logsDirectoryPath, this.sharingDelegate);
 
