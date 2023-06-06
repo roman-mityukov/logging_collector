@@ -1,5 +1,4 @@
 import 'dart:async';
-import 'dart:collection';
 import 'dart:io';
 
 import 'package:equatable/equatable.dart';
@@ -15,65 +14,69 @@ class LoggingCollectorBloc
   final LoggingCollectorConfig _config;
 
   LoggingCollectorBloc(this._config) : super(PendingActionState()) {
-    on<ClearAllEvent>(_onClearAllEvent);
-    on<ShareEvent>(_onShareEvent);
-    on<ShowEvent>(_onShowEvent);
+    on<DeleteAllLogsEvent>(_onDeleteAllLogsEvent);
+    on<ShareAllLogsEvent>(_onShareAllLogsEvent);
+    on<ShowLatestLogsEvent>(_onShowLatestLogsEvent);
   }
 
-  Future<void> _onClearAllEvent(
-    ClearAllEvent event,
+  Future<void> _onDeleteAllLogsEvent(
+    DeleteAllLogsEvent event,
     Emitter<LoggingCollectorState> emitter,
   ) async {
-    final directory = Directory(_config.logsDirectoryPath);
-    if (directory.existsSync()) {
-      directory.deleteSync(recursive: true);
+    final fileList = _getFileList();
+    for (final file in fileList) {
+      file.deleteSync();
     }
 
     emitter(PendingActionState());
   }
 
-  Future<void> _onShareEvent(
-    ShareEvent event,
+  Future<void> _onShareAllLogsEvent(
+    ShareAllLogsEvent event,
     Emitter<LoggingCollectorState> emitter,
   ) async {
-    final directory = Directory(_config.logsDirectoryPath);
+    final fileList = _getFileList();
 
-    if (directory.existsSync()) {
-      List<FileSystemEntity> fileList = directory.listSync();
-      if (fileList.whereType<File>().toList().isEmpty) {
-        emitter(AbsentLogsState());
-      } else {
-        await _config.sharingCallback.call();
-      }
+    if (fileList.isNotEmpty) {
+      await _config.sharingDelegate.share();
     } else {
-      emitter(AbsentLogsState());
+      emitter(AbsentLogsState(_config));
     }
+
     emitter(PendingActionState());
   }
 
-  Future<void> _onShowEvent(
-    ShowEvent event,
+  Future<void> _onShowLatestLogsEvent(
+    ShowLatestLogsEvent event,
     Emitter<LoggingCollectorState> emitter,
   ) async {
-    final directory = Directory(_config.logsDirectoryPath);
+    final fileList = _getFileList();
 
-    if (directory.existsSync()) {
-      List<FileSystemEntity> fileList = directory.listSync();
+    if (fileList.isNotEmpty) {
       fileList.sort((a, b) {
         return a.path.compareTo(b.path);
       });
-
-      final file = fileList.whereType<File>().toList().firstOrNull;
-      if (file != null && file.existsSync()) {
-        final bytes = file.readAsBytesSync();
-        final string = String.fromCharCodes(bytes);
-        emitter(ShowLogsState(string));
-      } else {
-        emitter(AbsentLogsState());
-      }
+      final file = fileList.first;
+      final bytes = file.readAsBytesSync();
+      final string = String.fromCharCodes(bytes);
+      emitter(ShowLatestLogsState(string));
     } else {
-      emitter(AbsentLogsState());
+      emitter(AbsentLogsState(_config));
     }
+
     emitter(PendingActionState());
+  }
+
+  List<File> _getFileList() {
+    final Directory directory = Directory(_config.logsDirectoryPath);
+    final List<File> fileList;
+
+    if (directory.existsSync()) {
+      fileList = directory.listSync().whereType<File>().toList();
+    } else {
+      fileList = [];
+    }
+
+    return fileList;
   }
 }

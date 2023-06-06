@@ -5,8 +5,8 @@ import 'package:logging_collector/logging_collector.dart';
 import 'package:mockito/annotations.dart';
 import 'package:mockito/mockito.dart';
 
+import '../../../test_utils.dart';
 import 'rolling_file_appender_test.mocks.dart';
-import 'test_utils.dart';
 
 @GenerateMocks([LoggingAppenderErrorHandler])
 void main() {

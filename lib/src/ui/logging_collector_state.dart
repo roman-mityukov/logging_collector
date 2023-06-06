@@ -7,10 +7,17 @@ sealed class LoggingCollectorState extends Equatable {
 
 class PendingActionState extends LoggingCollectorState {}
 
-class AbsentLogsState extends LoggingCollectorState {}
+class AbsentLogsState extends LoggingCollectorState {
+  final LoggingCollectorConfig config;
 
-class ShowLogsState extends LoggingCollectorState {
+  AbsentLogsState(this.config);
+
+  @override
+  List<Object?> get props => [config];
+}
+
+class ShowLatestLogsState extends LoggingCollectorState {
   final String data;
 
-  ShowLogsState(this.data);
+  ShowLatestLogsState(this.data);
 }

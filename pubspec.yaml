@@ -1,6 +1,6 @@
 name: logging_collector
 description: Package for logs sharing.
-version: 0.0.7
+version: 0.0.8
 homepage: 'https://github.com/roman-mityukov/logging_collector'
 repository: 'https://github.com/roman-mityukov/logging_collector'
 
@@ -20,6 +20,7 @@ dependencies:
   provider: ^6.0.5
 
 dev_dependencies:
+  bloc_test: 9.1.3
   build_runner: ^2.4.4
   flutter_test:
     sdk: flutter

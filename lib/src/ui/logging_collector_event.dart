@@ -2,8 +2,8 @@ part of 'logging_collector_bloc.dart';
 
 sealed class LoggingCollectorEvent {}
 
-class ClearAllEvent implements LoggingCollectorEvent {}
+class DeleteAllLogsEvent implements LoggingCollectorEvent {}
 
-class ShareEvent implements LoggingCollectorEvent {}
+class ShareAllLogsEvent implements LoggingCollectorEvent {}
 
-class ShowEvent implements LoggingCollectorEvent {}
+class ShowLatestLogsEvent implements LoggingCollectorEvent {}

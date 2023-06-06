@@ -16,7 +16,7 @@ class LoggingDetailsWidget extends StatelessWidget {
           IconButton(
             icon: const Icon(Icons.share),
             onPressed: () {
-              context.read<LoggingCollectorBloc>().add(ShareEvent());
+              context.read<LoggingCollectorBloc>().add(ShareAllLogsEvent());
             },
           ),
         ],

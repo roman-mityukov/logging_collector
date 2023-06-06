@@ -27,17 +27,17 @@ class LoggingCollectorControlWidget extends StatelessWidget {
                 const SizedBox(height: 16),
                 ElevatedButton(
                   onPressed: () =>
-                      context.read<LoggingCollectorBloc>().add(ShowEvent()),
+                      context.read<LoggingCollectorBloc>().add(ShowLatestLogsEvent()),
                   child: const Text('Show last logs'),
                 ),
                 ElevatedButton(
                   onPressed: () =>
-                      context.read<LoggingCollectorBloc>().add(ShareEvent()),
+                      context.read<LoggingCollectorBloc>().add(ShareAllLogsEvent()),
                   child: const Text('Share logs'),
                 ),
                 ElevatedButton(
                   onPressed: () =>
-                      context.read<LoggingCollectorBloc>().add(ClearAllEvent()),
+                      context.read<LoggingCollectorBloc>().add(DeleteAllLogsEvent()),
                   child: const Text('Clear logs directory'),
                 ),
               ],
@@ -48,7 +48,7 @@ class LoggingCollectorControlWidget extends StatelessWidget {
         }
       },
       listenWhen: (previous, current) {
-        return current is AbsentLogsState || current is ShowLogsState;
+        return current is AbsentLogsState || current is ShowLatestLogsState;
       },
       listener: (context, state) {
         if (state is AbsentLogsState) {
@@ -57,7 +57,9 @@ class LoggingCollectorControlWidget extends StatelessWidget {
             builder: (context) {
               return AlertDialog(
                 title: const Text('Error'),
-                content: const Text('There is no log file'),
+                content: Text(
+                  'There is no log files in ${state.config.logsDirectoryPath}',
+                ),
                 actions: <Widget>[
                   TextButton(
                     child: const Text('OK'),
@@ -69,7 +71,7 @@ class LoggingCollectorControlWidget extends StatelessWidget {
               );
             },
           );
-        } else if (state is ShowLogsState) {
+        } else if (state is ShowLatestLogsState) {
           Navigator.of(context).push(
             CupertinoPageRoute(
               builder: (_) => BlocProvider<LoggingCollectorBloc>.value(

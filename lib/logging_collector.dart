@@ -1,16 +1,20 @@
 library logging_collector;
 
-import 'package:logging_collector/src/domain/sharing/sharing_callback.dart';
+import 'package:equatable/equatable.dart';
+import 'package:logging_collector/src/domain/sharing/logs_sharing_delegate.dart';
 
 export 'src/ui/logging_collector_widget.dart';
 export 'src/domain/appender/logger_appender.dart';
 export 'src/domain/appender/logger_appender_error_handler.dart';
 export 'src/domain/appender/rolling_file_appender.dart';
-export 'src/domain/sharing/sharing_callback.dart';
+export 'src/domain/sharing/logs_sharing_delegate.dart';
 
-class LoggingCollectorConfig {
+class LoggingCollectorConfig extends Equatable {
   final String logsDirectoryPath;
-  final SharingCallback sharingCallback;
+  final LogsSharingDelegate sharingDelegate;
 
-  LoggingCollectorConfig(this.logsDirectoryPath, this.sharingCallback);
+  const LoggingCollectorConfig(this.logsDirectoryPath, this.sharingDelegate);
+
+  @override
+  List<Object?> get props => [logsDirectoryPath];
 }

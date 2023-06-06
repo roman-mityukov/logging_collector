@@ -1,1 +1,0 @@
-typedef SharingCallback = Future<void> Function();
